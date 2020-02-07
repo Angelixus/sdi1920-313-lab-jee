@@ -35,7 +35,8 @@ public class ServletCarrito extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		ConcurrentMap<String, Integer> concurrentCarrito = (ConcurrentHashMap<String, Integer>) request.getSession().getAttribute("carrito");
+		ConcurrentMap<String, Integer> concurrentCarrito = (ConcurrentHashMap<String, Integer>) request.getSession()
+				.getAttribute("carrito");
 		// No hay carrito, creamos uno y lo insertamos en sesión
 		if (concurrentCarrito == null) {
 			concurrentCarrito = new ConcurrentHashMap<String, Integer>();
@@ -45,14 +46,10 @@ public class ServletCarrito extends HttpServlet {
 		if (producto != null) {
 			insertarEnCarrito(concurrentCarrito, producto);
 		}
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out.println("<HTML>");
-		out.println("<HEAD><TITLE>Tienda SDI: carrito</TITLE></HEAD>");
-		out.println("<BODY>");
-		out.println(carritoEnHTML(concurrentCarrito) + "<br>");
-		out.println("<a href=\"index.jsp\">Volver</a></BODY></HTML>");
+		// Retornar la vista con parámetro "concurrentCarrito"
+		request.setAttribute("paresCarrito", concurrentCarrito);
+		getServletContext().getRequestDispatcher("/vista-carrito.jsp").forward(request, response);
+
 	}
 
 	private void insertarEnCarrito(ConcurrentMap<String, Integer> carrito, String claveProducto) {
@@ -64,14 +61,14 @@ public class ServletCarrito extends HttpServlet {
 		}
 
 	}
-	
+
 	private String carritoEnHTML(ConcurrentMap<String, Integer> carrito) {
 		StringBuffer carritoEnHTML = new StringBuffer();
-		for(String key : carrito.keySet()) {
-			carritoEnHTML.append("<p>["+key+"], " + carrito.get(key)+" unidades </p>");
+		for (String key : carrito.keySet()) {
+			carritoEnHTML.append("<p>[" + key + "], " + carrito.get(key) + " unidades </p>");
 		}
 		return carritoEnHTML.toString();
-		
+
 	}
 
 	/**
