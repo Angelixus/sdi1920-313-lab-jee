@@ -15,12 +15,11 @@ href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 <body>
 
 <%
-String nombre = request.getParameter("nombre");
-String password = request.getParameter("password");
+String nombre = (String) request.getParameter("nombre");
+String password = (String) request.getParameter("password");
 
 if(nombre != null && nombre.equals("admin") && password != null && password.equals("admin")) {
-	request.getSession().setAttribute("usuario", "admin");
-	response.sendRedirect("admin.jsp");
+	
 } else {
 	request.getSession().setAttribute("usuario", null);
 }
