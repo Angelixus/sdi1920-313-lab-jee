@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" import="com.uniovi.sdi.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
@@ -24,6 +25,9 @@
 			response.sendRedirect("login.jsp");
 		}
 	%>
+	<c:if test="${sessionScope.usuario != 'admin'}">
+		<c:redirect url="/login.jsp" />
+	</c:if>
 	<jsp:useBean id="producto" class="com.uniovi.sdi.Producto" />
 	<jsp:setProperty name="producto" property="*" />
 	<%
@@ -32,17 +36,13 @@
 			request.getRequestDispatcher("index.jsp").forward(request, response);
 		}
 	%>
-	<%
-		if(request.getParameter("nombre") != null && request.getParameter("imagen") != null && request.getParameter("precio") != null) {
-			String nombre = (String) request.getParameter("nombre");
-			String imagen = (String) request.getParameter("imagen");
-			float precio = Float.parseFloat(request.getParameter("precio"));
-			
-			Producto productoNuevo = new Producto(nombre, imagen, precio);
-			new ProductosService().setNuevoProducto(productoNuevo);
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-		}
-	%>
+	<c:if test="${producto.nombre != null}">
+		<jsp:useBean id="productosService"
+			class="com.uniovi.sdi.ProductosService" />
+		<jsp:setProperty name="productosService" property="nuevoProducto"
+			value="${producto}" />
+		<c:redirect url="/index.jsp" />
+	</c:if>
 	<!-- Contenido -->
 	<div class="container" id="contenedor-principal">
 		<h2>Agregar producto a la tienda</h2>
